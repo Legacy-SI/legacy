@@ -101,6 +101,10 @@ function LoginScreen({ setShowHomeSplash }) {
     router.push('/screens/RegisterUserScreen');
   };
 
+  const handleForgotPassword = () => {
+    router.push('./screens/ForgotPassword');
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -188,7 +192,7 @@ function LoginScreen({ setShowHomeSplash }) {
               </TouchableOpacity>
             </View>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handleForgotPassword}>
               <Text style={styles.forgotPassword}>Esqueceu a senha?</Text>
             </TouchableOpacity>
 

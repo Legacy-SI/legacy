@@ -3,26 +3,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+    Alert,
+    Keyboard,
+    KeyboardAvoidingView,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import SplashScreenHome from '../../../components/SplashScreenHome';
 
 export default function RegisterUserScreen() {
-  const [showHomeSplash, setShowHomeSplash] = useState(false);
   const router = useRouter();
   const [fontsLoaded] = useFonts({ Roboto_900Black });
 
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -33,63 +30,50 @@ export default function RegisterUserScreen() {
     router.back();
   };
 
-  if (showHomeSplash) {
-    return (
-      <SplashScreenHome
-        onFinish={() => {
-          setShowHomeSplash(false);
-          router.replace('/screens/HomeScreen');
-        }}
-      />
-    );
-  }
-
   const getBorderColor = (field: string, value: string) =>
     focusedField === field || value ? '#E7003B' : '#ccc';
 
   const handleRegister = () => {
-    if (!email.trim()) {
-      Alert.alert('Atenção', 'Por favor, preencha o campo de e-mail.');
-      return;
-    }
+  if (!password.trim()) {
+    Alert.alert('Atenção', 'Por favor, preencha o campo de senha.');
+    return;
+  }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      Alert.alert('E-mail inválido', 'Digite um e-mail válido.');
-      return;
-    }
+  const isWeak =
+    password.length < 6 ||
+    /^[a-zA-Z]+$/.test(password) ||
+    /^[0-9]+$/.test(password);
 
-    if (!password.trim()) {
-      Alert.alert('Atenção', 'Por favor, preencha o campo de senha.');
-      return;
-    }
+  if (isWeak) {
+    Alert.alert(
+      'Senha fraca',
+      'Crie uma senha mais forte com letras, números e ao menos 6 caracteres.'
+    );
+    return;
+  }
 
-    const isWeak =
-      password.length < 6 ||
-      /^[a-zA-Z]+$/.test(password) ||
-      /^[0-9]+$/.test(password);
+  if (!confirmPassword.trim()) {
+    Alert.alert('Atenção', 'Por favor, confirme sua senha.');
+    return;
+  }
 
-    if (isWeak) {
-      Alert.alert(
-        'Senha fraca',
-        'Crie uma senha mais forte com letras, números e ao menos 6 caracteres.'
-      );
-      return;
-    }
+  if (password !== confirmPassword) {
+    Alert.alert('Senhas diferentes', 'As senhas digitadas não coincidem.');
+    return;
+  }
 
-    if (!confirmPassword.trim()) {
-      Alert.alert('Atenção', 'Por favor, confirme sua senha.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Senhas diferentes', 'As senhas digitadas não coincidem.');
-      return;
-    }
-
-    // Após todas as validações, inicia a animação de splash
-    setShowHomeSplash(true);
-  };
+  Alert.alert(
+    'Sucesso',
+    'Senha criada com sucesso!',
+    [
+      {
+        text: 'OK',
+        onPress: () => router.replace('/'), // redireciona para index.tsx
+      },
+    ],
+    { cancelable: false }
+  );
+};
 
   if (!fontsLoaded) return null;
 
@@ -110,33 +94,13 @@ export default function RegisterUserScreen() {
             </TouchableOpacity>
 
             <View style={styles.header}>
-              <Text style={styles.titleSmall}>Crie sua conta</Text>
               <Text style={styles.titleBig}>LEGACY</Text>
             </View>
 
             <View style={styles.content}>
-              <View
-                style={[
-                  styles.inputContainer,
-                  { borderColor: getBorderColor('email', email) },
-                ]}
-              >
-                <Ionicons
-                  name="mail-outline"
-                  size={20}
-                  color={getBorderColor('email', email)}
-                  style={styles.icon}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder="E-mail"
-                  placeholderTextColor="#ccc"
-                  value={email}
-                  onChangeText={setEmail}
-                  onFocus={() => setFocusedField('email')}
-                  onBlur={() => setFocusedField(null)}
-                />
-              </View>
+                <View>
+                    <Text style={styles.titleSmall}>Crie uma senha nova</Text>
+                </View>
 
               <View
                 style={[
@@ -210,17 +174,11 @@ export default function RegisterUserScreen() {
                 </TouchableOpacity>
               </View>
 
-              <Text style={styles.termsText}>
-                Ao criar uma conta, você aceita todos os{' '}
-                <Text style={styles.termsLink}>termos</Text> e{' '}
-                <Text style={styles.termsLink}>condições</Text>
-              </Text>
-
               <TouchableOpacity
                 style={styles.registerButton}
                 onPress={handleRegister}
               >
-                <Text style={styles.registerText}>Cadastre-se</Text>
+                <Text style={styles.registerText}>Enviar</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -248,19 +206,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   titleSmall: {
-    fontSize: 16,
+    textAlign: 'center',
+    fontSize: 20,
     color: '#B0B0B0',
-    marginBottom: 5,
+    marginBottom: 20,
   },
   titleBig: {
-    fontSize: 36,
+    fontSize: 50,
     fontFamily: 'Roboto_900Black',
     color: '#E7003B',
     marginBottom: 20,
   },
   content: {
     width: '100%',
-    marginTop: 20,
+    marginTop: 50,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -278,17 +237,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#000',
-  },
-  termsText: {
-    textAlign: 'center',
-    fontSize: 14,
-    color: '#B0B0B0',
-    marginTop: 10,
-    marginBottom: 20,
-  },
-  termsLink: {
-    color: '#E7003B',
-    fontWeight: 'bold',
   },
   registerButton: {
     backgroundColor: '#E7003B',

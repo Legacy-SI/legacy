@@ -27,7 +27,7 @@ Desenvolvido com **Expo** e **React Native**, o app explora o poder do mobile co
 
 | Tela Login | Tela Inicial | Tela de Cadastro |
 | ------------ | -------- | --------- |
-| ![screenshot1](https://i.imgur.com/tZY7EEm.png/150) | ![screenshot2](https://i.imgur.com/WEW4J2E.png/150) | ![screenshot3](https://i.imgur.com/qf7La0F.png/150) |
+| ![screenshot1](https://i.imgur.com/tZY7EEm.png/150)](https://www.youtube.com/shorts/eW7yIPhgGuM) | ![screenshot2](https://i.imgur.com/WEW4J2E.png/150)](https://www.youtube.com/shorts/eW7yIPhgGuM) | ![screenshot3](https://i.imgur.com/qf7La0F.png/150)](https://www.youtube.com/shorts/eW7yIPhgGuM) |
 
 ---
 

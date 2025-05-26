@@ -1,3 +1,25 @@
+
+
+
+[![Assista a demonstração no YouTube](https://img.youtube.com/vi/ID_DO_VIDEO/0.jpg)](https://www.youtube.com/shorts/eW7yIPhgGuM)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).

@@ -1,6 +1,6 @@
 # 📱 LEGACY APP - Viva o Novo
 
-![Thumbnail](https://i.imgur.com/NGkCNKM.png)
+[![Assista a demonstração no YouTube](https://i.imgur.com/SBdqfwH.png)](https://www.youtube.com/shorts/eW7yIPhgGuM)
 
 **Assista a demonstração no YouTube**  
 👉 [Clique aqui para ver o vídeo](https://www.youtube.com/shorts/eW7yIPhgGuM)
@@ -19,18 +19,15 @@ Desenvolvido com **Expo** e **React Native**, o app explora o poder do mobile co
 - ✅ Navegação intuitiva e fluida  
 - ✅ Design moderno com neon e gradientes  
 - ✅ Compatível com Android e iOS  
-- ✅ Integração com YouTube  
 - ✅ Responsividade garantida  
 
 ---
 
 ## 🖼️ Screenshots
 
-| Tela Inicial | Animação | Interface |
+| Tela Login | Tela Inicial | Tela de Cadastro |
 | ------------ | -------- | --------- |
-| ![screenshot1](https://via.placeholder.com/150) | ![screenshot2](https://via.placeholder.com/150) | ![screenshot3](https://via.placeholder.com/150) |
-
-*Substitua as imagens pelos prints reais do app*  
+| ![screenshot1](https://i.imgur.com/tZY7EEm.png/150) | ![screenshot2](https://i.imgur.com/WEW4J2E.png/150) | ![screenshot3](https://i.imgur.com/qf7La0F.png/150) |
 
 ---
 

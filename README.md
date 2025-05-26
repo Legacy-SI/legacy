@@ -1,7 +1,5 @@
 # 📱 LEGACY APP - Viva o Novo
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 [![Assista a demonstração no YouTube](https://i.imgur.com/WQnjaYY.jpeg)](https://www.youtube.com/shorts/eW7yIPhgGuM)
 
 **Assista a demonstração no YouTube**  
@@ -71,6 +69,7 @@ npx expo start
 ## Licença
 
 Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 
 

@@ -2,7 +2,7 @@
 # Assista a demonstração no Youtube clicando abaixo! 👋
 
 
-[![Assista a demonstração no YouTube](https://img.youtube.com/vi/eW7yIPhgGuM/0.jpg)](https://www.youtube.com/shorts/eW7yIPhgGuM)
+[![Assista a demonstração no YouTube](https://imgur.com/a/xYOFJGf)](https://www.youtube.com/shorts/eW7yIPhgGuM)
 
 
 

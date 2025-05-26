@@ -1,72 +1,59 @@
- 
-# Assista a demonstração no Youtube clicando na imagem abaixo! 👋
+# 📱 LEGACY APP - Viva o Novo
 
-[![Assista a demonstração no YouTube](https://i.imgur.com/NGkCNKM.png)](https://www.youtube.com/shorts/eW7yIPhgGuM)
+![Thumbnail](https://i.imgur.com/NGkCNKM.png)
 
+**Assista a demonstração no YouTube**  
+👉 [Clique aqui para ver o vídeo](https://www.youtube.com/shorts/eW7yIPhgGuM)
 
+---
 
+## 🚀 Sobre o Projeto
 
+O **Legacy App** é uma aplicação mobile criada para proporcionar uma experiência única aos usuários, integrando tecnologia moderna com design vibrante.  
+Desenvolvido com **Expo** e **React Native**, o app explora o poder do mobile com foco em usabilidade e performance.
 
+---
 
+## ✨ Features
 
+- ✅ Navegação intuitiva e fluida  
+- ✅ Design moderno com neon e gradientes  
+- ✅ Compatível com Android e iOS  
+- ✅ Integração com YouTube  
+- ✅ Responsividade garantida  
 
+---
 
+## 🖼️ Screenshots
 
+| Tela Inicial | Animação | Interface |
+| ------------ | -------- | --------- |
+| ![screenshot1](https://via.placeholder.com/150) | ![screenshot2](https://via.placeholder.com/150) | ![screenshot3](https://via.placeholder.com/150) |
 
+*Substitua as imagens pelos prints reais do app*  
 
+---
 
+## 🛠️ Tecnologias
 
+- [Expo](https://expo.dev/)  
+- [React Native](https://reactnative.dev/)  
+- [TypeScript](https://www.typescriptlang.org/)  
+- [React Navigation](https://reactnavigation.org/)  
 
+---
 
-
-
-# Welcome to your Expo app 👋
-
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
-
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## 📦 Como instalar e rodar
 
 ```bash
-npm run reset-project
-```
+# Clone o repositório
+git clone https://github.com/seuusuario/legacy-app.git
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+# Acesse a pasta
+cd legacy-app
 
-## Learn more
+# Instale as dependências
+npm install
 
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+# Inicie o app
+npx expo start

@@ -25,9 +25,18 @@ Desenvolvido com **Expo** e **React Native**, o app explora o poder do mobile co
 
 ## 🖼️ Screenshots
 
-| Tela Login | Tela Inicial | Tela de Cadastro |
-| ------------ | -------- | --------- |
-| ![screenshot1](https://i.imgur.com/tZY7EEm.png/150)](https://www.youtube.com/shorts/eW7yIPhgGuM) | ![screenshot2](https://i.imgur.com/WEW4J2E.png/150)](https://www.youtube.com/shorts/eW7yIPhgGuM) | ![screenshot3](https://i.imgur.com/qf7La0F.png/150)](https://www.youtube.com/shorts/eW7yIPhgGuM) |
+<table>
+  <tr>
+    <th>Tela Login</th>
+    <th>Tela Inicial</th>
+    <th>Tela de Cadastro</th>
+  </tr>
+  <tr>
+    <td><img src="https://i.imgur.com/tZY7EEm.png" width="150"></td>
+    <td><img src="https://i.imgur.com/WEW4J2E.png" width="150"></td>
+    <td><img src="https://i.imgur.com/qf7La0F.png" width="150"></td>
+  </tr>
+</table>
 
 ---
 

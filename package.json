@@ -9,7 +9,6 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "expo lint",
-    "test": "jest"
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.3.0",

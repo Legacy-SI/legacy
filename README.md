@@ -1,5 +1,7 @@
 # 📱 LEGACY APP - Viva o Novo
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [![Assista a demonstração no YouTube](https://i.imgur.com/WQnjaYY.jpeg)](https://www.youtube.com/shorts/eW7yIPhgGuM)
 
 **Assista a demonstração no YouTube**  
@@ -49,6 +51,7 @@ Desenvolvido com **Expo** e **React Native**, o app explora o poder do mobile co
 
 ---
 
+
 ## 📦 Como instalar e rodar
 
 ```bash
@@ -63,3 +66,11 @@ npm install
 
 # Inicie o app
 npx expo start
+```
+
+## Licença
+
+Este projeto está licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+
+

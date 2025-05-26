@@ -1,6 +1,6 @@
 # 📱 LEGACY APP - Viva o Novo
 
-[![Assista a demonstração no YouTube](https://i.imgur.com/SBdqfwH.png)](https://www.youtube.com/shorts/eW7yIPhgGuM)
+[![Assista a demonstração no YouTube](https://i.imgur.com/WQnjaYY.jpeg)](https://www.youtube.com/shorts/eW7yIPhgGuM)
 
 **Assista a demonstração no YouTube**  
 👉 [Clique aqui para ver o vídeo](https://www.youtube.com/shorts/eW7yIPhgGuM)

@@ -1,7 +1,7 @@
  
 # Assista a demonstração no Youtube clicando na imagem abaixo! 👋
 
-[![Assista a demonstração no YouTube](https://i.imgur.com/mI90Uvb.png)](https://www.youtube.com/shorts/eW7yIPhgGuM)
+[![Assista a demonstração no YouTube](https://i.imgur.com/NGkCNKM.png)](https://www.youtube.com/shorts/eW7yIPhgGuM)
 
 
 

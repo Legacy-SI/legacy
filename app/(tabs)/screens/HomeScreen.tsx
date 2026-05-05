@@ -1,8 +1,7 @@
 import { Feather, FontAwesome } from '@expo/vector-icons'; // Ícones
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-
-const { width: windowWidth } = Dimensions.get('window');
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const events = [
   { uri: require('../../../assets/images/ImgProxEventoOne.jpg') },
@@ -10,12 +9,27 @@ const events = [
 ];
 
 export default function HomeScreen() {
+  const router = useRouter();
+
+  const handleLogout = () => {
+    router.replace('/');
+  };
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       {/* HEADER */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>LEGACY</Text>
-        <Text style={styles.headerWelcome}>BEM-VINDO</Text>
+        <View style={styles.headerActions}>
+          <Text style={styles.headerWelcome}>BEM-VINDO</Text>
+          <TouchableOpacity
+            onPress={handleLogout}
+            style={styles.logoutButton}
+            accessibilityLabel="Sair"
+          >
+            <Feather name="log-out" size={24} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* INGRESSO */}
@@ -89,7 +103,14 @@ const styles = StyleSheet.create({
   headerWelcome: {
     fontSize: 14,
     color: '#FFFFFF',
-    alignSelf: 'center',
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logoutButton: {
+    marginLeft: 10,
+    padding: 4,
   },
   ticketSection: {
   width: '90%',

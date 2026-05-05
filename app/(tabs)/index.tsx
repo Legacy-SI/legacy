@@ -1,7 +1,7 @@
 import { Roboto_900Black, useFonts } from '@expo-google-fonts/roboto';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
@@ -54,7 +54,11 @@ export default function Index() {
   );
 }
 
-function LoginScreen({ setShowHomeSplash }) {
+type LoginScreenProps = {
+  setShowHomeSplash: Dispatch<SetStateAction<boolean>>;
+};
+
+function LoginScreen({ setShowHomeSplash }: LoginScreenProps) {
   const [fontsLoaded] = useFonts({ Roboto_900Black });
   const [emailFocused, setEmailFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);

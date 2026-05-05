@@ -63,7 +63,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
 
       return () => clearTimeout(timer);
     }
-  }, [index]);
+  }, [index, onFinish, opacity, scale]);
 
   return (
     <View style={styles.container}>

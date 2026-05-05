@@ -1,18 +1,28 @@
 import { Feather, FontAwesome } from '@expo/vector-icons'; // Ícones
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Image, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 const events = [
   { uri: require('../../../assets/images/ImgProxEventoOne.jpg') },
   { uri: require('../../../assets/images/ImgProxEventoTwo.jpg') },
 ];
 
+const socialLinks = {
+  globe: 'https://bio.site/legacyalphaville',
+  instagram: 'https://www.instagram.com/legacyalphaville',
+  whatsapp: 'https://chat.whatsapp.com/Bbur8Y6zQBpGOkqxdfVb4q',
+};
+
 export default function HomeScreen() {
   const router = useRouter();
 
   const handleLogout = () => {
     router.replace('/');
+  };
+
+  const handleOpenLink = (url: string) => {
+    Linking.openURL(url);
   };
 
   return (
@@ -62,13 +72,25 @@ export default function HomeScreen() {
 
       {/* FOOTER */}
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.footerIcon}>
+        <TouchableOpacity
+          style={styles.footerIcon}
+          onPress={() => handleOpenLink(socialLinks.instagram)}
+          accessibilityLabel="Abrir Instagram"
+        >
           <FontAwesome name="instagram" size={32} color="#FF0033" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerIcon}>
+        <TouchableOpacity
+          style={styles.footerIcon}
+          onPress={() => handleOpenLink(socialLinks.whatsapp)}
+          accessibilityLabel="Abrir WhatsApp"
+        >
           <FontAwesome name="whatsapp" size={32} color="#FF0033" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.footerIcon}>
+        <TouchableOpacity
+          style={styles.footerIcon}
+          onPress={() => handleOpenLink(socialLinks.globe)}
+          accessibilityLabel="Abrir site"
+        >
           <Feather name="globe" size={32} color="#FF0033" />
         </TouchableOpacity>
       </View>

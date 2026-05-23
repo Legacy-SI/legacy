@@ -8,7 +8,11 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "lint": "expo lint"
+    "lint": "expo lint",
+    "api": "npm run dev --prefix api",
+    "api:build": "npm run build --prefix api",
+    "api:migrate": "npm run prisma:migrate --prefix api",
+    "api:generate": "npm run prisma:generate --prefix api"
   },
   "dependencies": {
     "@expo-google-fonts/roboto": "^0.3.0",
@@ -48,18 +52,9 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
-    "@types/bcryptjs": "^2.4.6",
-    "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6",
-    "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^25.9.1",
     "@types/react": "~19.1.0",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",
-    "nodemon": "^3.1.14",
-    "prisma": "^7.8.0",
-    "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "~5.8.3"
   },
   "private": true

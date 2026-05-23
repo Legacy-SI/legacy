@@ -121,7 +121,7 @@ function LoginScreen({ setShowHomeSplash }: LoginScreenProps) {
   };
 
   const handleForgotPassword = () => {
-    router.push('./screens/ForgotPassword');
+    router.push('/screens/ForgotPassword');
   };
 
   return (

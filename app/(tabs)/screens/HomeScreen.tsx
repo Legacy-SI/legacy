@@ -131,7 +131,7 @@ export default function HomeScreen() {
               <Text style={styles.gcBannerTitleRed}>DO DOMINGO</Text>
             </Text>
             <Text style={styles.gcBannerDesc}>
-              Os GCs se reúnem nas casas durante a semana. Role para o lado e encontre o grupo
+              Os GCs se reúnem nas casas durante a semana. Role para baixo e encontre o grupo
               mais próximo de você.
             </Text>
           </View>

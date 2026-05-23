@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-export default function RegisterUserScreen() {
+export default function NewPasswordScreen() {
   const router = useRouter();
   const { token, signOut } = useAuth();
   const [fontsLoaded] = useFonts({ Roboto_900Black });

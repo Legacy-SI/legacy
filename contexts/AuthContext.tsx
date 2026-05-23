@@ -15,7 +15,7 @@ type AuthContextData = {
   token: string | null
   isLoading: boolean
   mustChangePassword: boolean
-  signIn: (email: string, password: string) => Promise<void>
+  signIn: (email: string, password: string) => Promise<{ mustChangePassword: boolean }>
   signOut: () => Promise<void>
 }
 

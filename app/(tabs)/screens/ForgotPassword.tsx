@@ -215,9 +215,13 @@ export default function ForgotPasswordScreen() {
                   {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.SendText}>Verificar</Text>}
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={() => {
-                // Adicionar Back-end - Reenviar Código
+                <TouchableOpacity onPress={async () => {
+                  try {
+                    await api.post('/password/forgot', { email });
                     Alert.alert('Código reenviado', 'Um novo código foi enviado para seu e-mail.');
+                  } catch {
+                    Alert.alert('Erro', 'Não foi possível reenviar o código.');
+                  }
                 }}>
                     <Text style={{ textAlign: 'center' }}>
                         <Text style={{ color: '#B0B0B0' }}>Não recebeu o código? </Text>

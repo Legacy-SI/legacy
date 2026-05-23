@@ -13,6 +13,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ProductCard from '../../../components/store/ProductCard';
 import { storeProducts } from '../../../constants/storeProducts';
 
@@ -71,6 +72,7 @@ const socialLinks = {
 
 export default function HomeScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const handleLogout = () => {
     router.replace('/');
@@ -92,7 +94,7 @@ export default function HomeScreen() {
       bounces={false}
       overScrollMode="never"
     >
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Text style={styles.headerTitle}>LEGACY</Text>
         <View style={styles.headerActions}>
           <Text style={styles.headerWelcome}>BEM-VINDO</Text>

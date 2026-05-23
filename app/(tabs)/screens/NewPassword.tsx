@@ -2,7 +2,10 @@ import { Roboto_900Black, useFonts } from '@expo-google-fonts/roboto';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
+import { api } from '../../../services/api';
+import { useAuth } from '../../../contexts/AuthContext';
 import {
+    ActivityIndicator,
     Alert,
     Keyboard,
     KeyboardAvoidingView,
@@ -18,6 +21,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 
 export default function RegisterUserScreen() {
   const router = useRouter();
+  const { token, signOut } = useAuth();
   const [fontsLoaded] = useFonts({ Roboto_900Black });
 
   const [password, setPassword] = useState('');
@@ -25,6 +29,7 @@ export default function RegisterUserScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleGoBack = () => {
     router.back();
@@ -33,47 +38,49 @@ export default function RegisterUserScreen() {
   const getBorderColor = (field: string, value: string) =>
     focusedField === field || value ? '#E7003B' : '#ccc';
 
-  const handleRegister = () => {
-  if (!password.trim()) {
-    Alert.alert('Atenção', 'Por favor, preencha o campo de senha.');
-    return;
-  }
+  const handleRegister = async () => {
+    if (!password.trim()) {
+      Alert.alert('Atenção', 'Por favor, preencha o campo de senha.');
+      return;
+    }
 
-  const isWeak =
-    password.length < 6 ||
-    /^[a-zA-Z]+$/.test(password) ||
-    /^[0-9]+$/.test(password);
+    const isWeak =
+      password.length < 6 ||
+      /^[a-zA-Z]+$/.test(password) ||
+      /^[0-9]+$/.test(password);
 
-  if (isWeak) {
-    Alert.alert(
-      'Senha fraca',
-      'Crie uma senha mais forte com letras, números e ao menos 6 caracteres.'
-    );
-    return;
-  }
+    if (isWeak) {
+      Alert.alert('Senha fraca', 'Crie uma senha mais forte com letras, números e ao menos 6 caracteres.');
+      return;
+    }
 
-  if (!confirmPassword.trim()) {
-    Alert.alert('Atenção', 'Por favor, confirme sua senha.');
-    return;
-  }
+    if (!confirmPassword.trim()) {
+      Alert.alert('Atenção', 'Por favor, confirme sua senha.');
+      return;
+    }
 
-  if (password !== confirmPassword) {
-    Alert.alert('Senhas diferentes', 'As senhas digitadas não coincidem.');
-    return;
-  }
+    if (password !== confirmPassword) {
+      Alert.alert('Senhas diferentes', 'As senhas digitadas não coincidem.');
+      return;
+    }
 
-  Alert.alert(
-    'Sucesso',
-    'Senha criada com sucesso!',
-    [
-      {
-        text: 'OK',
-        onPress: () => router.replace('/'), // redireciona para index.tsx
-      },
-    ],
-    { cancelable: false }
-  );
-};
+    setIsLoading(true);
+    try {
+      await api.put('/password/change', { newPassword: password }, {
+        Authorization: `Bearer ${token}`,
+      });
+      Alert.alert(
+        'Senha alterada',
+        'Sua senha foi alterada com sucesso. Faça login novamente.',
+        [{ text: 'OK', onPress: async () => { await signOut(); router.replace('/'); } }],
+        { cancelable: false }
+      );
+    } catch (error: any) {
+      Alert.alert('Erro', error.message ?? 'Não foi possível alterar a senha.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   if (!fontsLoaded) return null;
 
@@ -177,8 +184,12 @@ export default function RegisterUserScreen() {
               <TouchableOpacity
                 style={styles.registerButton}
                 onPress={handleRegister}
+                disabled={isLoading}
               >
-                <Text style={styles.registerText}>Enviar</Text>
+                {isLoading
+                  ? <ActivityIndicator color="#fff" />
+                  : <Text style={styles.registerText}>Enviar</Text>
+                }
               </TouchableOpacity>
             </View>
           </View>
@@ -194,6 +205,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 30,
     alignItems: 'center',
+    paddingBottom: 40,
   },
   backButton: {
     position: 'absolute',
@@ -218,8 +230,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   content: {
+    flex: 1,
     width: '100%',
-    marginTop: 50,
+    justifyContent: 'center',
+    marginBottom: 80,
   },
   inputContainer: {
     flexDirection: 'row',

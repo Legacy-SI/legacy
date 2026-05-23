@@ -3,10 +3,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Keyboard,
-  KeyboardAvoidingView,
-  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -14,40 +13,37 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import SplashScreenHome from '../../../components/SplashScreenHome';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { api } from '../../../services/api';
 
 export default function RegisterUserScreen() {
-  const [showHomeSplash, setShowHomeSplash] = useState(false);
   const router = useRouter();
   const [fontsLoaded] = useFonts({ Roboto_900Black });
 
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [focusedField, setFocusedField] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const insets = useSafeAreaInsets();
 
   const handleGoBack = () => {
     router.back();
   };
 
-  if (showHomeSplash) {
-    return (
-      <SplashScreenHome
-        onFinish={() => {
-          setShowHomeSplash(false);
-          router.replace('/screens/HomeScreen');
-        }}
-      />
-    );
-  }
-
   const getBorderColor = (field: string, value: string) =>
     focusedField === field || value ? '#E7003B' : '#ccc';
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
+    if (!name.trim()) {
+      Alert.alert('Atenção', 'Por favor, preencha o campo de nome.');
+      return;
+    }
+
     if (!email.trim()) {
       Alert.alert('Atenção', 'Por favor, preencha o campo de e-mail.');
       return;
@@ -70,10 +66,7 @@ export default function RegisterUserScreen() {
       /^[0-9]+$/.test(password);
 
     if (isWeak) {
-      Alert.alert(
-        'Senha fraca',
-        'Crie uma senha mais forte com letras, números e ao menos 6 caracteres.'
-      );
+      Alert.alert('Senha fraca', 'Crie uma senha mais forte com letras, números e ao menos 6 caracteres.');
       return;
     }
 
@@ -87,34 +80,60 @@ export default function RegisterUserScreen() {
       return;
     }
 
-    // Após todas as validações, inicia a animação de splash
-    setShowHomeSplash(true);
+    setIsLoading(true);
+    try {
+      await api.post('/users', { name, email, password });
+      Alert.alert(
+        'Conta criada!',
+        'Seu cadastro foi realizado com sucesso. Faça login para continuar.',
+        [{ text: 'OK', onPress: () => router.replace('/') }],
+        { cancelable: false }
+      );
+    } catch (error: any) {
+      Alert.alert('Erro', error.message ?? 'Não foi possível criar a conta.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!fontsLoaded) return null;
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAwareScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          enableOnAndroid
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.container}>
-            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+            <TouchableOpacity onPress={handleGoBack} style={[styles.backButton, { top: insets.top + 12 }]}>
               <Ionicons name="arrow-back" size={28} color="#E7003B" />
             </TouchableOpacity>
 
-            <View style={styles.header}>
+            <View style={[styles.header, { marginTop: insets.top + 60 }]}>
               <Text style={styles.titleSmall}>Crie sua conta</Text>
               <Text style={styles.titleBig}>LEGACY</Text>
             </View>
 
             <View style={styles.content}>
+              <View
+                style={[
+                  styles.inputContainer,
+                  { borderColor: getBorderColor('name', name) },
+                ]}
+              >
+                <Ionicons
+                  name="person-outline"
+                  size={20}
+                  color={getBorderColor('name', name)}
+                  style={styles.icon}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Nome"
+                  placeholderTextColor="#ccc"
+                  value={name}
+                  onChangeText={setName}
+                  onFocus={() => setFocusedField('name')}
+                  onBlur={() => setFocusedField(null)}
+                />
+              </View>
+
               <View
                 style={[
                   styles.inputContainer,
@@ -135,6 +154,8 @@ export default function RegisterUserScreen() {
                   onChangeText={setEmail}
                   onFocus={() => setFocusedField('email')}
                   onBlur={() => setFocusedField(null)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
                 />
               </View>
 
@@ -155,6 +176,7 @@ export default function RegisterUserScreen() {
                   placeholder="Crie uma senha"
                   placeholderTextColor="#ccc"
                   secureTextEntry={!showPassword}
+                  textContentType="newPassword"
                   value={password}
                   onChangeText={setPassword}
                   onFocus={() => setFocusedField('password')}
@@ -188,6 +210,7 @@ export default function RegisterUserScreen() {
                   placeholder="Confirme sua senha"
                   placeholderTextColor="#ccc"
                   secureTextEntry={!showConfirmPassword}
+                  textContentType="newPassword"
                   value={confirmPassword}
                   onChangeText={setConfirmPassword}
                   onFocus={() => setFocusedField('confirm')}
@@ -219,14 +242,16 @@ export default function RegisterUserScreen() {
               <TouchableOpacity
                 style={styles.registerButton}
                 onPress={handleRegister}
+                disabled={isLoading}
               >
-                <Text style={styles.registerText}>Cadastre-se</Text>
+                {isLoading
+                  ? <ActivityIndicator color="#fff" />
+                  : <Text style={styles.registerText}>Cadastre-se</Text>
+                }
               </TouchableOpacity>
             </View>
-          </View>
-        </KeyboardAwareScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -239,12 +264,10 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 50,
     left: 20,
     zIndex: 1,
   },
   header: {
-    marginTop: 150,
     alignItems: 'center',
   },
   titleSmall: {
@@ -260,7 +283,7 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
-    marginTop: 20,
+    marginTop: 60,
   },
   inputContainer: {
     flexDirection: 'row',

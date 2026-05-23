@@ -2,7 +2,9 @@ import { Roboto_900Black, useFonts } from '@expo-google-fonts/roboto';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useRef, useState } from 'react';
+import { api } from '../../../services/api';
 import {
+    ActivityIndicator,
     Alert,
     Keyboard,
     KeyboardAvoidingView,
@@ -51,8 +53,10 @@ export default function ForgotPasswordScreen() {
   const getBorderColor = (field: string, value: string) =>
     focusedField === field || value ? '#E7003B' : '#ccc';
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // Validação e envio do email
-  const handleSendEmail = () => {
+  const handleSendEmail = async () => {
     if (!email.trim()) {
       Alert.alert('Atenção', 'Por favor, preencha o campo de e-mail.');
       return;
@@ -64,13 +68,17 @@ export default function ForgotPasswordScreen() {
       return;
     }
 
-    // Simular envio do código e mostrar alerta
-    Alert.alert('Sucesso', 'Código de recuperação enviado para seu e-mail.', [
-      {
-        text: 'OK',
-        onPress: () => setStep('code'),  // Trocar a tela só depois que usuário clicar OK
-      },
-    ]);
+    setIsLoading(true);
+    try {
+      await api.post('/password/forgot', { email });
+      Alert.alert('Código enviado', 'Verifique seu e-mail e insira o código de 4 dígitos.', [
+        { text: 'OK', onPress: () => setStep('code') },
+      ]);
+    } catch (error: any) {
+      Alert.alert('Erro', error.message ?? 'Não foi possível enviar o código.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Função para lidar com mudança nos inputs do código
@@ -86,22 +94,28 @@ export default function ForgotPasswordScreen() {
     }
   };
 
-    // Verificar código
-    const handleVerifyCode = () => {
+  // Verificar código
+  const handleVerifyCode = async () => {
     const enteredCode = code.join('');
     if (enteredCode.length < 4) {
-        Alert.alert('Código incompleto', 'Por favor, preencha os 4 dígitos do código.');
-        return;
+      Alert.alert('Código incompleto', 'Por favor, preencha os 4 dígitos do código.');
+      return;
     }
 
-    // Aqui você faria a validação do código via API, etc.
-    Alert.alert('Sucesso', 'Código verificado com sucesso!', [
-        {
-        text: 'OK',
-            onPress: () => router.push('./NewPassword'),
-        },
-    ]);
-    };
+    setIsLoading(true);
+    try {
+      await api.post('/password/reset', { email, code: enteredCode });
+      Alert.alert(
+        'Senha redefinida',
+        'Sua senha foi alterada para Legacy@2026. Ao acessar o sistema, altere sua senha.',
+        [{ text: 'OK', onPress: () => router.replace('/') }]
+      );
+    } catch (error: any) {
+      Alert.alert('Erro', error.message ?? 'Código inválido ou expirado.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
   if (!fontsLoaded) return null;
@@ -166,8 +180,8 @@ export default function ForgotPasswordScreen() {
                   Enviaremos um código de {'\n'} recuperação para seu e-mail
                 </Text>
 
-                <TouchableOpacity style={styles.SendButton} onPress={handleSendEmail}>
-                  <Text style={styles.SendText}>Enviar</Text>
+                <TouchableOpacity style={styles.SendButton} onPress={handleSendEmail} disabled={isLoading}>
+                  {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.SendText}>Enviar</Text>}
                 </TouchableOpacity>
               </View>
             ) : (
@@ -197,8 +211,8 @@ export default function ForgotPasswordScreen() {
                   ))}
                 </View>
 
-                <TouchableOpacity style={styles.SendButton} onPress={handleVerifyCode}>
-                  <Text style={styles.SendText}>Verificar</Text>
+                <TouchableOpacity style={styles.SendButton} onPress={handleVerifyCode} disabled={isLoading}>
+                  {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.SendText}>Verificar</Text>}
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => {

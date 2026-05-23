@@ -2,6 +2,7 @@ import { Roboto_900Black, useFonts } from '@expo-google-fonts/roboto';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { Dispatch, SetStateAction, useState } from 'react';
+import { useAuth } from '../../contexts/AuthContext';
 import {
   ActivityIndicator,
   Alert,
@@ -65,7 +66,9 @@ function LoginScreen({ setShowHomeSplash }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+  const { signIn, mustChangePassword } = useAuth();
 
   if (!fontsLoaded) {
     return (
@@ -96,9 +99,21 @@ function LoginScreen({ setShowHomeSplash }: LoginScreenProps) {
     return true;
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!validateFields()) return;
-    setShowHomeSplash(true);
+    setIsLoading(true);
+    try {
+      const { mustChangePassword: shouldChange } = await signIn(email, password);
+      if (shouldChange) {
+        router.push('/screens/NewPassword');
+      } else {
+        setShowHomeSplash(true);
+      }
+    } catch (error: any) {
+      Alert.alert('Erro', error.message ?? 'Não foi possível fazer login');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRegister = () => {
@@ -200,8 +215,11 @@ function LoginScreen({ setShowHomeSplash }: LoginScreenProps) {
               <Text style={styles.forgotPassword}>Esqueceu a senha?</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginText}>Login</Text>
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={isLoading}>
+              {isLoading
+                ? <ActivityIndicator color="#fff" />
+                : <Text style={styles.loginText}>Login</Text>
+              }
             </TouchableOpacity>
 
             <Text style={styles.or}>ou</Text>

@@ -8,6 +8,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     ...restOptions,
   })
 
+  if (response.status === 204) return undefined as T
+
   const data = await response.json()
 
   if (!response.ok) {
@@ -24,6 +26,12 @@ export const api = {
   put: <T>(path: string, body: unknown, headers?: HeadersInit) =>
     request<T>(path, { method: 'PUT', body: JSON.stringify(body), headers }),
 
+  patch: <T>(path: string, body: unknown, headers?: HeadersInit) =>
+    request<T>(path, { method: 'PATCH', body: JSON.stringify(body), headers }),
+
   get: <T>(path: string, headers?: HeadersInit) =>
     request<T>(path, { method: 'GET', headers }),
+
+  delete: <T = void>(path: string, headers?: HeadersInit) =>
+    request<T>(path, { method: 'DELETE', headers }),
 }

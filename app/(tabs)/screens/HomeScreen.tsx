@@ -1,8 +1,9 @@
-import { Feather, FontAwesome } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import React from 'react';
+import { Feather, FontAwesome } from '@expo/vector-icons'
+import { LinearGradient } from 'expo-linear-gradient'
+import { useFocusEffect, useRouter } from 'expo-router'
+import React, { useCallback, useState } from 'react'
 import {
+  ActivityIndicator,
   Dimensions,
   Image,
   ImageBackground,
@@ -12,18 +13,24 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import ProductCard from '../../../components/store/ProductCard';
-import { storeProducts } from '../../../constants/storeProducts';
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import CartModal from '../../../components/store/CartModal'
+import ProductCard from '../../../components/store/ProductCard'
+import { useAuth } from '../../../contexts/AuthContext'
+import { ApiProduct, useReservation } from '../../../contexts/ReservationContext'
+import { api } from '../../../services/api'
 
-const SCREEN_WIDTH = Dimensions.get('window').width;
-const GC_CARD_WIDTH = SCREEN_WIDTH - 32;
+const SCREEN_WIDTH = Dimensions.get('window').width
+const GC_CARD_WIDTH = SCREEN_WIDTH - 32
+// 16px padding cada lado + 12px gap = 44px. Limita em 170 para não crescer no iPhone.
+const EVENT_IMAGE_WIDTH = Math.min(170, (SCREEN_WIDTH - 44) / 2)
+const EVENT_IMAGE_HEIGHT = Math.round(EVENT_IMAGE_WIDTH * (220 / 170))
 
 const events = [
   { uri: require('../../../assets/images/ImgProxEventoThree.png') },
   { uri: require('../../../assets/images/ImgProxEventoFour.png') },
-];
+]
 
 const gcGroups = [
   {
@@ -59,33 +66,59 @@ const gcGroups = [
     address: 'Rua Bonnard, 132, Condomínio Acqua Park, Apto 272, Bloco C, Green Valley',
     gradientColors: ['#0DB350', '#001810'] as const,
   },
-];
+]
 
 const GC_FORM_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSfqNqmBL6ZkIECPjNwjGdnLZ_JamYNR_0v6WjllROjSXjW5zQ/viewform';
+  'https://docs.google.com/forms/d/e/1FAIpQLSfqNqmBL6ZkIECPjNwjGdnLZ_JamYNR_0v6WjllROjSXjW5zQ/viewform'
 
 const socialLinks = {
   globe: 'https://bio.site/legacyalphaville',
   instagram: 'https://www.instagram.com/legacyalphaville',
   whatsapp: 'https://chat.whatsapp.com/Bbur8Y6zQBpGOkqxdfVb4q',
-};
+}
 
 export default function HomeScreen() {
-  const router = useRouter();
-  const insets = useSafeAreaInsets();
+  const router = useRouter()
+  const insets = useSafeAreaInsets()
+  const { signOut } = useAuth()
+  const { itemCount } = useReservation()
 
-  const handleLogout = () => {
-    router.replace('/');
-  };
+  const [products, setProducts] = useState<ApiProduct[]>([])
+  const [loadingProducts, setLoadingProducts] = useState(true)
+  const [cartVisible, setCartVisible] = useState(false)
+
+  const loadProducts = useCallback(async () => {
+    try {
+      setLoadingProducts(true)
+      const data = await api.get<ApiProduct[]>('/products')
+      setProducts(data)
+    } catch (err) {
+      console.error('[HomeScreen] Falha ao carregar produtos:', err)
+    } finally {
+      setLoadingProducts(false)
+    }
+  }, [])
+
+  // Reload products every time the screen is focused (stock may have changed)
+  useFocusEffect(
+    useCallback(() => {
+      loadProducts()
+    }, [loadProducts]),
+  )
+
+  const handleLogout = async () => {
+    await signOut()
+    router.replace('/')
+  }
 
   const handleOpenLink = (url: string) => {
-    Linking.openURL(url);
-  };
+    Linking.openURL(url)
+  }
 
   const handleOpenMaps = (address: string) => {
-    const encoded = encodeURIComponent(address);
-    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encoded}`);
-  };
+    const encoded = encodeURIComponent(address)
+    Linking.openURL(`https://www.google.com/maps/search/?api=1&query=${encoded}`)
+  }
 
   return (
     <ScrollView
@@ -97,23 +130,35 @@ export default function HomeScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <Text style={styles.headerTitle}>LEGACY</Text>
         <View style={styles.headerActions}>
-          <Text style={styles.headerWelcome}>BEM-VINDO</Text>
+          <TouchableOpacity
+            onPress={() => setCartVisible(true)}
+            style={styles.cartButton}
+            accessibilityLabel="Abrir carrinho"
+          >
+            <Feather name="shopping-bag" size={22} color="#FFFFFF" />
+            {itemCount > 0 && (
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{itemCount > 9 ? '9+' : itemCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={handleLogout}
             style={styles.logoutButton}
             accessibilityLabel="Sair"
           >
-            <Feather name="log-out" size={24} color="#FFFFFF" />
+            <Feather name="log-out" size={22} color="#FFFFFF" />
           </TouchableOpacity>
         </View>
       </View>
 
       <Text style={styles.sectionTitle}>PRÓXIMOS EVENTOS</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.eventScroll}>
+      <View style={styles.eventsRow}>
         {events.map((item, index) => (
           <Image key={index} source={item.uri} style={styles.eventImage} resizeMode="cover" />
         ))}
-      </ScrollView>
+      </View>
 
       <View style={styles.gcBannerCard}>
         <ImageBackground
@@ -195,6 +240,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      {/* Store section */}
       <View style={styles.storeSection}>
         <View style={styles.storeHeader}>
           <View style={styles.storeEyebrowRow}>
@@ -204,7 +250,7 @@ export default function HomeScreen() {
           <Text style={styles.storeTitle}>Conheça nossa loja</Text>
           <Text style={styles.storeDescription}>
             Veja as peças disponíveis, escolha um tamanho e solicite a separação para retirada
-            presencial. Sem carrinho, checkout ou pagamento online pelo app.
+            presencial. Sem checkout ou pagamento online pelo app.
           </Text>
         </View>
 
@@ -231,23 +277,29 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.storeProductList}
-        >
-          {storeProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              id={product.id}
-              name={product.name}
-              category={product.category}
-              sizes={product.sizes}
-              status={product.status}
-              image={product.mainImage}
-            />
-          ))}
-        </ScrollView>
+        {loadingProducts ? (
+          <View style={styles.productsLoader}>
+            <ActivityIndicator color="#FF0033" size="large" />
+          </View>
+        ) : (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.storeProductList}
+          >
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                id={product.id}
+                name={product.name}
+                category={product.category}
+                sizes={product.sizes}
+                stockQuantity={product.stockQuantity}
+                imageUrl={product.imageUrl}
+              />
+            ))}
+          </ScrollView>
+        )}
       </View>
 
       <View style={styles.footer}>
@@ -281,10 +333,18 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.footerCopy}>© 2026 Legacy </Text>
+        <Text style={styles.footerCopy}>© 2026 Legacy</Text>
       </View>
+
+      <CartModal
+        visible={cartVisible}
+        onClose={() => {
+          setCartVisible(false)
+          loadProducts()
+        }}
+      />
     </ScrollView>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -311,16 +371,33 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#FFFFFF',
   },
-  headerWelcome: {
-    fontSize: 14,
-    color: '#FFFFFF',
-  },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
+  },
+  cartButton: {
+    padding: 4,
+    position: 'relative',
+  },
+  cartBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -4,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 3,
+  },
+  cartBadgeText: {
+    color: '#FF0033',
+    fontSize: 10,
+    fontWeight: '900',
   },
   logoutButton: {
-    marginLeft: 10,
     padding: 4,
   },
   sectionTitle: {
@@ -330,13 +407,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 10,
   },
-  eventScroll: {
-    paddingHorizontal: 10,
+  eventsRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 12,
   },
   eventImage: {
-    width: 170,
-    height: 220,
-    marginHorizontal: 10,
+    width: EVENT_IMAGE_WIDTH,
+    height: EVENT_IMAGE_HEIGHT,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#CCC',
@@ -600,6 +678,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.12)',
     marginTop: 22,
   },
+  productsLoader: {
+    paddingVertical: 40,
+    alignItems: 'center',
+  },
   storeProductList: {
     paddingLeft: 16,
     paddingRight: 2,
@@ -628,7 +710,6 @@ const styles = StyleSheet.create({
     letterSpacing: 5,
     marginBottom: 6,
   },
- 
   footerSocials: {
     flexDirection: 'row',
     gap: 36,
@@ -644,4 +725,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
   },
-});
+})

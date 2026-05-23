@@ -17,9 +17,11 @@ import {
     View,
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({ Roboto_900Black });
 
   // Estado para controlar tela: 'email' ou 'code'
@@ -94,74 +96,55 @@ export default function ForgotPasswordScreen() {
     }
   };
 
-  // Verificar código
-  const handleVerifyCode = async () => {
+  // Verificar código — navega para redefinir senha passando email e código como params
+  const handleVerifyCode = () => {
     const enteredCode = code.join('');
     if (enteredCode.length < 4) {
       Alert.alert('Código incompleto', 'Por favor, preencha os 4 dígitos do código.');
       return;
     }
 
-    setIsLoading(true);
-    try {
-      await api.post('/password/reset', { email, code: enteredCode });
-      Alert.alert(
-        'Senha redefinida',
-        'Sua senha foi alterada para Legacy@2026. Ao acessar o sistema, altere sua senha.',
-        [{ text: 'OK', onPress: () => router.replace('/') }]
-      );
-    } catch (error: any) {
-      Alert.alert('Erro', error.message ?? 'Código inválido ou expirado.');
-    } finally {
-      setIsLoading(false);
-    }
+    router.push({
+      pathname: '/screens/NewPassword',
+      params: { email, code: enteredCode },
+    });
   };
 
 
   if (!fontsLoaded) return null;
 
-  return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <KeyboardAwareScrollView
-          contentContainerStyle={{ flexGrow: 1 }}
-          enableOnAndroid
-          keyboardShouldPersistTaps="handled"
-        >
-          <View style={styles.container}>
-            {/* Botão voltar */}
-            <TouchableOpacity onPress={handleGoBack} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={28} color="#E7003B" />
-            </TouchableOpacity>
+  // Step de e-mail: mantém scroll pois o teclado pode cobrir o input
+  if (step === 'email') {
+    return (
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAwareScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            enableOnAndroid
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.container}>
+              <TouchableOpacity onPress={handleGoBack} style={[styles.backButton, { top: insets.top + 12 }]}>
+                <Ionicons name="arrow-back" size={28} color="#E7003B" />
+              </TouchableOpacity>
 
-            {/* Título */}
-            <View style={styles.header}>
-              <Text style={styles.titleBig}>LEGACY</Text>
-            </View>
+              <View style={[styles.header, { marginTop: insets.top + 80 }]}>
+                <Text style={styles.titleBig}>LEGACY</Text>
+              </View>
 
-            {step === 'email' ? (
-              // Tela - Envio de E-mail de Recuperação de Senha
               <View style={styles.content}>
-                <View>
-                  <Text style={styles.titleSmal}>Esqueceu sua senha ?</Text>
-                </View>
+                <Text style={styles.titleSmal}>Esqueceu sua senha?</Text>
 
-                <View
-                  style={[
-                    styles.inputContainer,
-                    { borderColor: getBorderColor('email', email) },
-                  ]}
-                >
+                <View style={[styles.inputContainer, { borderColor: getBorderColor('email', email) }]}>
                   <Ionicons
                     name="mail-outline"
                     size={20}
                     color={getBorderColor('email', email)}
                     style={styles.icon}
                   />
-
                   <TextInput
                     style={styles.input}
                     placeholder="E-mail"
@@ -184,56 +167,70 @@ export default function ForgotPasswordScreen() {
                   {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.SendText}>Enviar</Text>}
                 </TouchableOpacity>
               </View>
-            ) : (
-              // Tela - Verificação de Código
-              <View style={styles.content}>
-                <Text style={[styles.titleSmal, { marginBottom: 40, marginTop: 20, color: '#B0B0B0', textAlign: 'center' }]}>
-                  Insira o código que enviamos para seu e-mail
-                </Text>
+            </View>
+          </KeyboardAwareScrollView>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    );
+  }
 
-                <View style={styles.codeInputContainer}>
-                  {code.map((digit, index) => (
-                    <TextInput
-                      key={index}
-                      ref={inputsRef[index]}
-                      style={styles.codeInput}
-                      keyboardType="number-pad"
-                      maxLength={1}
-                      value={digit}
-                      onChangeText={(text) => handleCodeChange(text, index)}
-                      returnKeyType="next"
-                      onSubmitEditing={() => {
-                        if (index < inputsRef.length - 1) {
-                          inputsRef[index + 1].current?.focus();
-                        }
-                      }}
-                    />
-                  ))}
-                </View>
+  // Step do código: layout fixo igual ao RegisterUserScreen — teclado não empurra nada
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <TouchableOpacity onPress={handleGoBack} style={[styles.backButton, { top: insets.top + 12 }]}>
+          <Ionicons name="arrow-back" size={28} color="#E7003B" />
+        </TouchableOpacity>
 
-                <TouchableOpacity style={styles.SendButton} onPress={handleVerifyCode} disabled={isLoading}>
-                  {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.SendText}>Verificar</Text>}
-                </TouchableOpacity>
+        <View style={[styles.header, { marginTop: insets.top + 80 }]}>
+          <Text style={styles.titleBig}>LEGACY</Text>
+        </View>
 
-                <TouchableOpacity onPress={async () => {
-                  try {
-                    await api.post('/password/forgot', { email });
-                    Alert.alert('Código reenviado', 'Um novo código foi enviado para seu e-mail.');
-                  } catch {
-                    Alert.alert('Erro', 'Não foi possível reenviar o código.');
+        <View style={styles.content}>
+          <Text style={[styles.titleSmal, { marginBottom: 40, marginTop: 20 }]}>
+            Insira o código que enviamos para seu e-mail
+          </Text>
+
+          <View style={styles.codeInputContainer}>
+            {code.map((digit, index) => (
+              <TextInput
+                key={index}
+                ref={inputsRef[index]}
+                style={styles.codeInput}
+                keyboardType="number-pad"
+                maxLength={1}
+                value={digit}
+                onChangeText={(text) => handleCodeChange(text, index)}
+                returnKeyType="next"
+                onSubmitEditing={() => {
+                  if (index < inputsRef.length - 1) {
+                    inputsRef[index + 1].current?.focus();
                   }
-                }}>
-                    <Text style={{ textAlign: 'center' }}>
-                        <Text style={{ color: '#B0B0B0' }}>Não recebeu o código? </Text>
-                        <Text style={{ color: '#E7003B', textDecorationLine: 'underline' }}>Reenviar código</Text>
-                    </Text>
-                </TouchableOpacity>
-              </View>
-            )}
+                }}
+              />
+            ))}
           </View>
-        </KeyboardAwareScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+
+          <TouchableOpacity style={styles.SendButton} onPress={handleVerifyCode} disabled={isLoading}>
+            {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.SendText}>Verificar</Text>}
+          </TouchableOpacity>
+
+          <TouchableOpacity onPress={async () => {
+            try {
+              await api.post('/password/forgot', { email });
+              Alert.alert('Código reenviado', 'Um novo código foi enviado para seu e-mail.');
+            } catch {
+              Alert.alert('Erro', 'Não foi possível reenviar o código.');
+            }
+          }}>
+            <Text style={{ textAlign: 'center' }}>
+              <Text style={{ color: '#B0B0B0' }}>Não recebeu o código? </Text>
+              <Text style={{ color: '#E7003B', textDecorationLine: 'underline' }}>Reenviar código</Text>
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -246,12 +243,10 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 50,
     left: 20,
     zIndex: 1,
   },
   header: {
-    marginTop: 150,
     alignItems: 'center',
   },
   titleBig: {

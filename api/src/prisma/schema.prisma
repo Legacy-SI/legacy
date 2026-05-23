@@ -15,19 +15,66 @@ model User {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   passwordResetTokens PasswordResetToken[]
+  reservations        Reservation[]
 
   @@map("users")
 }
 
 model PasswordResetToken {
-  id        String   @id @default(uuid())
-  token     String   @unique
-  userId    String   @map("user_id")
-  expiresAt DateTime @map("expires_at")
+  id        String    @id @default(uuid())
+  token     String    @unique
+  userId    String    @map("user_id")
+  expiresAt DateTime  @map("expires_at")
   usedAt    DateTime? @map("used_at")
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_reset_tokens")
+}
+
+model Product {
+  id            String   @id @default(uuid())
+  name          String
+  description   String
+  imageUrl      String   @map("image_url")
+  category      String
+  sizes         String[]
+  stockQuantity Int      @default(0) @map("stock_quantity")
+  isActive      Boolean  @default(true) @map("is_active")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  reservationItems ReservationItem[]
+
+  @@map("products")
+}
+
+model Reservation {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  status    String   @default("active")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user  User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items ReservationItem[]
+
+  @@map("reservations")
+}
+
+model ReservationItem {
+  id            String   @id @default(uuid())
+  reservationId String   @map("reservation_id")
+  productId     String   @map("product_id")
+  size          String?
+  quantity      Int      @default(1)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  reservation Reservation @relation(fields: [reservationId], references: [id], onDelete: Cascade)
+  product     Product     @relation(fields: [productId], references: [id])
+
+  @@unique([reservationId, productId])
+  @@map("reservation_items")
 }

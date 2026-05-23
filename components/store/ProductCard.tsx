@@ -1,53 +1,38 @@
-import { Feather } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
-import React from 'react';
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { Feather } from '@expo/vector-icons'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Image } from 'expo-image'
+import { useRouter } from 'expo-router'
+import React from 'react'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { DEFAULT_PRODUCT_IMAGE, PRODUCT_IMAGES } from '../../constants/productImages'
 
 type ProductCardProps = {
-  id: string;
-  name: string;
-  category: string;
-  sizes: string[];
-  status: 'available' | 'reserved';
-  image: ImageSourcePropType;
-};
-
-const statusCopy = {
-  available: {
-    label: 'Disponível',
-    action: 'Solicitar reserva',
-  },
-  reserved: {
-    label: 'Esgotado',
-    action: 'Ver detalhes',
-  },
-};
+  id: string
+  name: string
+  category: string
+  sizes: string[]
+  stockQuantity: number
+  imageUrl: string
+}
 
 export default function ProductCard({
   id,
   name,
   category,
   sizes,
-  status,
-  image,
+  stockQuantity,
+  imageUrl,
 }: ProductCardProps) {
-  const router = useRouter();
-  const copy = statusCopy[status];
+  const router = useRouter()
+  const isOutOfStock = stockQuantity === 0
+  const image = PRODUCT_IMAGES[imageUrl] ?? DEFAULT_PRODUCT_IMAGE
 
   const handlePress = () => {
     router.push({
       pathname: '/screens/ProductDetailsScreen',
       params: { id },
-    });
-  };
+    })
+  }
 
   return (
     <TouchableOpacity
@@ -58,15 +43,15 @@ export default function ProductCard({
       accessibilityLabel={`Ver detalhes de ${name}`}
     >
       <View style={styles.imageWrap}>
-        <Image source={image} style={styles.image} resizeMode="cover" />
+        <Image source={image} style={styles.image} contentFit="cover" />
         <LinearGradient
           colors={['transparent', 'rgba(0,0,0,0.82)']}
           style={styles.gradient}
         />
 
-        <View style={[styles.statusBadge, status === 'reserved' && styles.statusReserved]}>
-          <View style={[styles.statusDot, status === 'reserved' && styles.statusDotReserved]} />
-          <Text style={styles.statusText}>{copy.label}</Text>
+        <View style={[styles.statusBadge, isOutOfStock && styles.statusEsgotado]}>
+          <View style={[styles.statusDot, isOutOfStock && styles.statusDotEsgotado]} />
+          <Text style={styles.statusText}>{isOutOfStock ? 'Esgotado' : 'Disponível'}</Text>
         </View>
 
         <View style={styles.overlayContent}>
@@ -86,13 +71,19 @@ export default function ProductCard({
           ))}
         </View>
 
-        <View style={[styles.actionBar, status === 'reserved' && styles.actionBarDark]}>
-          <Text style={styles.actionText}>{copy.action}</Text>
+        {!isOutOfStock && (
+          <Text style={styles.stockText}>{stockQuantity} disponíveis</Text>
+        )}
+
+        <View style={[styles.actionBar, isOutOfStock && styles.actionBarDark]}>
+          <Text style={styles.actionText}>
+            {isOutOfStock ? 'Ver detalhes' : 'Solicitar reserva'}
+          </Text>
           <Feather name="arrow-right" size={14} color="#FFFFFF" />
         </View>
       </View>
     </TouchableOpacity>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -134,7 +125,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
   },
-  statusReserved: {
+  statusEsgotado: {
     backgroundColor: 'rgba(20,20,20,0.85)',
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.15)',
@@ -145,7 +136,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: '#FFFFFF',
   },
-  statusDotReserved: {
+  statusDotEsgotado: {
     backgroundColor: '#AAAAAA',
   },
   statusText: {
@@ -177,7 +168,7 @@ const styles = StyleSheet.create({
   },
   bottom: {
     padding: 12,
-    gap: 10,
+    gap: 8,
   },
   sizesRow: {
     flexDirection: 'row',
@@ -194,6 +185,11 @@ const styles = StyleSheet.create({
   sizeChipText: {
     color: '#AAAAAA',
     fontSize: 12,
+    fontWeight: '700',
+  },
+  stockText: {
+    color: '#66BB6A',
+    fontSize: 11,
     fontWeight: '700',
   },
   actionBar: {
@@ -214,4 +210,4 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     letterSpacing: 0.3,
   },
-});
+})

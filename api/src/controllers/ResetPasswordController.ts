@@ -3,13 +3,15 @@ import { hash } from 'bcryptjs'
 import { prisma } from '../config/database'
 import { AppError } from '../middlewares/errorHandler'
 
-const DEFAULT_PASSWORD = 'Legacy@2026'
-
 export async function resetPassword(req: Request, res: Response) {
-  const { email, code } = req.body
+  const { email, code, newPassword } = req.body
 
-  if (!email || !code) {
-    throw new AppError('E-mail e código são obrigatórios')
+  if (!email || !code || !newPassword) {
+    throw new AppError('E-mail, código e nova senha são obrigatórios')
+  }
+
+  if (newPassword.length < 6) {
+    throw new AppError('A senha deve ter pelo menos 6 caracteres')
   }
 
   const user = await prisma.user.findUnique({ where: { email } })
@@ -26,7 +28,7 @@ export async function resetPassword(req: Request, res: Response) {
     throw new AppError('Código inválido ou expirado')
   }
 
-  const hashedPassword = await hash(DEFAULT_PASSWORD, 8)
+  const hashedPassword = await hash(newPassword, 8)
 
   await prisma.user.update({
     where: { id: user.id },
@@ -37,8 +39,6 @@ export async function resetPassword(req: Request, res: Response) {
     where: { id: resetToken.id },
     data: { usedAt: new Date() },
   })
-
-  console.log(`[RESET] Senha do usuário ${user.email} redefinida para ${DEFAULT_PASSWORD}`)
 
   return res.json({ message: 'Senha redefinida com sucesso' })
 }

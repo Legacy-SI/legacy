@@ -5,8 +5,6 @@ import { prisma } from '../config/database'
 import { AppError } from '../middlewares/errorHandler'
 import { env } from '../config/env'
 
-const DEFAULT_PASSWORD = 'Legacy@2026'
-
 export async function createSession(req: Request, res: Response) {
   const { email, password } = req.body
 
@@ -30,8 +28,6 @@ export async function createSession(req: Request, res: Response) {
     expiresIn: env.JWT_EXPIRES_IN as any,
   })
 
-  const mustChangePassword = await compare(DEFAULT_PASSWORD, user.password)
-
   return res.json({
     user: {
       id: user.id,
@@ -39,6 +35,6 @@ export async function createSession(req: Request, res: Response) {
       email: user.email,
     },
     token,
-    mustChangePassword,
+    mustChangePassword: false,
   })
 }

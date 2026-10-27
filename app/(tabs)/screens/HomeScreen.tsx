@@ -69,7 +69,7 @@ const gcGroups = [
 ]
 
 const GC_FORM_URL =
-  'https://docs.google.com/forms/d/e/1FAIpQLSfqNqmBL6ZkIECPjNwjGdnLZ_JamYNR_0v6WjllROjSXjW5zQ/viewform'
+  'https://encontre-seu-gc-legacyalpha.vercel.app/legacy?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAdGRleAVM0VhleHRuA2FlbQIxMQBwZG9mAmZkaWQWURHYoQY-Y01_6ImErl3q7TFnKAmUyHNydGMGYXBwX2lkDzEyNDAyNDU3NDI4NzQxNAABp_RRTI4pj4fED3cfDcL7F6ZlMQuLU54ruv0tLS29DlPg1y8htRnOOuf_L_Yh_aem_ZyRFmvIg38BQaiCYyh_Teg'
 
 const socialLinks = {
   globe: 'https://bio.site/legacyalphaville',
@@ -144,6 +144,14 @@ export default function HomeScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
+            onPress={() => router.push('/screens/ProfileScreen')}
+            style={styles.logoutButton}
+            accessibilityLabel="Meu perfil"
+          >
+            <Feather name="user" size={22} color="#FFFFFF" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
             onPress={handleLogout}
             style={styles.logoutButton}
             accessibilityLabel="Sair"
@@ -153,12 +161,42 @@ export default function HomeScreen() {
         </View>
       </View>
 
+      <TouchableOpacity
+        style={styles.devotionalCard}
+        onPress={() => router.push('/screens/DevotionalScreen')}
+        activeOpacity={0.85}
+      >
+        <View style={styles.devotionalAccent} />
+        <View style={styles.devotionalContent}>
+          <View style={styles.devotionalBadge}>
+            <View style={styles.devotionalBadgeDot} />
+            <Text style={styles.devotionalBadgeText}>DEVOCIONAL DO DIA</Text>
+          </View>
+          <Text style={styles.devotionalTitle}>Palavra para hoje</Text>
+          <Text style={styles.devotionalDesc}>
+            Um versículo, uma reflexão e uma oração especial para o seu dia.
+          </Text>
+          <View style={styles.devotionalCta}>
+            <Text style={styles.devotionalCtaText}>LER AGORA</Text>
+            <Feather name="arrow-right" size={14} color="#FF0033" />
+          </View>
+        </View>
+      </TouchableOpacity>
+
       <Text style={styles.sectionTitle}>PRÓXIMOS EVENTOS</Text>
       <View style={styles.eventsRow}>
         {events.map((item, index) => (
           <Image key={index} source={item.uri} style={styles.eventImage} resizeMode="cover" />
         ))}
       </View>
+      <TouchableOpacity
+        style={styles.agendaBtn}
+        onPress={() => router.push('/screens/EventsScreen')}
+      >
+        <Feather name="calendar" size={15} color="#FF0033" />
+        <Text style={styles.agendaBtnText}>VER AGENDA COMPLETA</Text>
+        <Feather name="arrow-right" size={15} color="#FF0033" />
+      </TouchableOpacity>
 
       <View style={styles.gcBannerCard}>
         <ImageBackground
@@ -724,5 +762,80 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 12,
     fontWeight: '500',
+  },
+  agendaBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginTop: 14,
+    borderWidth: 1.5,
+    borderColor: '#FF0033',
+    borderRadius: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+  agendaBtnText: {
+    color: '#FF0033',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 0.5,
+  },
+  devotionalCard: {
+    width: '90%',
+    marginTop: 30,
+    marginBottom: 4,
+    backgroundColor: '#111',
+    borderRadius: 16,
+    flexDirection: 'row',
+    overflow: 'hidden',
+  },
+  devotionalAccent: {
+    width: 5,
+    backgroundColor: '#FF0033',
+  },
+  devotionalContent: {
+    flex: 1,
+    padding: 20,
+  },
+  devotionalBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  devotionalBadgeDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 4,
+    backgroundColor: '#FF0033',
+    marginRight: 7,
+  },
+  devotionalBadgeText: {
+    color: '#FF0033',
+    fontSize: 10,
+    fontWeight: 'bold',
+    letterSpacing: 1.2,
+  },
+  devotionalTitle: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 6,
+  },
+  devotionalDesc: {
+    color: '#AAAAAA',
+    fontSize: 13,
+    lineHeight: 19,
+    marginBottom: 16,
+  },
+  devotionalCta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  devotionalCtaText: {
+    color: '#FF0033',
+    fontWeight: 'bold',
+    fontSize: 12,
+    letterSpacing: 0.5,
   },
 })

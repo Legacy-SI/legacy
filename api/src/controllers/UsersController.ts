@@ -4,6 +4,26 @@ import { prisma } from '../config/database'
 import { AppError } from '../middlewares/errorHandler'
 import { sendEmail, welcomeEmailTemplate } from '../utils/email'
 
+export async function getMe(req: Request, res: Response) {
+  const user = await prisma.user.findUnique({
+    where: { id: req.userId },
+    select: { id: true, name: true, email: true, createdAt: true },
+  })
+  if (!user) throw new AppError('Usuário não encontrado', 404)
+  return res.json(user)
+}
+
+export async function updateMe(req: Request, res: Response) {
+  const { name } = req.body as { name?: string }
+  if (!name?.trim()) throw new AppError('Nome é obrigatório')
+  const user = await prisma.user.update({
+    where: { id: req.userId },
+    data: { name: name.trim() },
+    select: { id: true, name: true, email: true, createdAt: true },
+  })
+  return res.json(user)
+}
+
 export async function createUser(req: Request, res: Response) {
   const { name, email, password } = req.body
 

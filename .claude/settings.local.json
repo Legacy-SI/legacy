@@ -1,7 +1,30 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx expo *)"
+      "Bash(npx expo *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Ryan\\\\OneDrive\\\\Área de Trabalho\\\\Projetos\\\\legacy\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(Test-Path \"c:\\\\Users\\\\Ryan\\\\OneDrive\\\\Área de Trabalho\\\\Projetos\\\\legacy\\\\api\\\\prisma.config.ts\")",
+      "Bash(npm run *)",
+      "Bash(npm install *)",
+      "Bash(npx prisma *)",
+      "Bash(timeout 8 npx ts-node -r tsconfig-paths/register src/server.ts)",
+      "Bash(netstat -ano)",
+      "Bash(awk '{print $NF}')",
+      "Bash(xargs -I{} kill -9 {})",
+      "PowerShell(New-NetFirewallRule -DisplayName \"Legacy API 3333\" -Direction Inbound -Protocol TCP -LocalPort 3333 -Action Allow -Profile Any)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(Get-ChildItem -Path \"c:\\\\Users\\\\Ryan\\\\OneDrive\\\\Área de Trabalho\\\\Projetos\\\\legacy\" -Force)",
+      "Bash(Select-Object Name, PSIsContainer)",
+      "Bash(Format-Table -AutoSize)",
+      "PowerShell(Get-ChildItem -Path \"c:\\\\Users\\\\Ryan\\\\OneDrive\\\\Área de Trabalho\\\\Projetos\\\\legacy\\\\api\\\\src\" -Recurse -Force | Select-Object FullName, PSIsContainer | ConvertTo-Json | ForEach-Object { if \\($_ -match 'node_modules'\\) { } else { $_ } })",
+      "PowerShell(Head -50)",
+      "Bash(git -C \"c:/Users/Ryan/OneDrive/Área de Trabalho/Projetos/legacy\" status)",
+      "Bash(git -C \"c:/Users/Ryan/OneDrive/Área de Trabalho/Projetos/legacy\" log --oneline -3)",
+      "Bash(git -C \"c:/Users/Ryan/OneDrive/Área de Trabalho/Projetos/legacy\" diff --stat)"
     ]
   }
 }
